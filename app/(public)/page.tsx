@@ -11,6 +11,11 @@ import {
   WashingMachine,
   Zap,
   ArrowRight,
+  Send,
+  ShieldCheck,
+  ClipboardCheck,
+  Wallet,
+  BadgeCheck,
 } from "lucide-react";
 import { Hero } from "@/components/home/Hero";
 import { FeaturedServices } from "@/components/home/FeaturedServices";
@@ -47,24 +52,29 @@ export default function HomePage() {
       <section className="bg-muted/50 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-3xl font-bold">
-            A simpler way to get it fixed
+            How FixMate works
           </h2>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: Search,
-                title: "Find your service",
+                title: "Find a service",
                 text: "Compare repair options by category, area, and starting price.",
               },
               {
+                icon: Send,
+                title: "Send a request",
+                text: "Describe the problem, pick a date, and send your repair request.",
+              },
+              {
                 icon: Wrench,
-                title: "Send a repair request",
-                text: "Tell the technician what is wrong and follow every status update from your dashboard.",
+                title: "Technician fixes it",
+                text: "Follow every status update from your dashboard until the job is done.",
               },
               {
                 icon: CreditCard,
                 title: "Pay after completion",
-                text: "Review the final amount and pay securely through Stripe once the work is completed.",
+                text: "Review the final amount and pay securely through Stripe only after the work is completed.",
               },
             ].map(({ icon: Icon, title, text }, i) => (
               <div key={title} className="rounded-xl border bg-card p-6">
@@ -79,6 +89,47 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <h2 className="text-center text-3xl font-bold">Why choose FixMate</h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-muted-foreground">
+          Repairs should feel safe and clear from the first request to the final
+          payment.
+        </p>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              icon: ShieldCheck,
+              title: "Verified technicians",
+              text: "Every service is reviewed and approved by an admin before it goes live.",
+            },
+            {
+              icon: ClipboardCheck,
+              title: "Track every job",
+              text: "See each step from requested to completed, with no guessing.",
+            },
+            {
+              icon: Wallet,
+              title: "Pay after service",
+              text: "You pay only when the work is delivered, never before.",
+            },
+            {
+              icon: BadgeCheck,
+              title: "Secure payments",
+              text: "Payments are handled by Stripe, and every transaction is recorded.",
+            },
+          ].map(({ icon: Icon, title, text }) => (
+            <div key={title} className="rounded-xl border bg-card p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-500/10">
+                <Icon className="h-6 w-6 text-brand-500" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {text}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
