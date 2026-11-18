@@ -8,9 +8,14 @@ export default function Page() {
         This checkout wasn’t completed. Your booking is still available in My
         Bookings, where you can check its payment status and try again.
       </p>
-      <Button asChild>
-        <Link href="/dashboard/customer/bookings">Back to my bookings</Link>
-      </Button>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Button asChild className="bg-brand-500 text-white hover:bg-brand-600">
+          <Link href="/dashboard/customer/bookings">Try Again</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/">Back to Home</Link>
+        </Button>
+      </div>
     </div>
   );
 }
