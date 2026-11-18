@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { publicFetch } from "@/lib/api";
@@ -14,6 +14,11 @@ export function ServicesBrowser() {
   const params = useSearchParams();
   const router = useRouter();
   const query = params.toString();
+  // Always build the next URL from the latest one, even if two filters change quickly.
+  const latestQuery = useRef(query);
+  useEffect(() => {
+    latestQuery.current = query;
+  }, [query]);
   const [search, setSearch] = useState(params.get("search") || "");
   const [result, setResult] = useState<PaginatedServices | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,10 +46,11 @@ export function ServicesBrowser() {
     };
   }, [query, retry]);
   function update(key: string, value: string) {
-    const next = new URLSearchParams(query);
+    const next = new URLSearchParams(latestQuery.current);
     if (value) next.set(key, value);
     else next.delete(key);
     if (key !== "page") next.delete("page");
+    latestQuery.current = next.toString();
     router.push(`/services?${next}`);
   }
   const selectClass =
@@ -170,9 +176,27 @@ export function ServicesBrowser() {
             >
               Previous
             </Button>
-            <span className="text-sm">
-              Page {result.page} of {result.totalPages}
-            </span>
+            <div className="flex items-center gap-1">
+              {Array.from(
+                { length: Math.min(5, result.totalPages) },
+                (_, i) =>
+                  Math.max(
+                    1,
+                    Math.min(result.page - 2, result.totalPages - 4),
+                  ) + i,
+              ).map((n) => (
+                <Button
+                  key={n}
+                  size="sm"
+                  variant={n === result.page ? "default" : "outline"}
+                  aria-label={`Page ${n}`}
+                  aria-current={n === result.page ? "page" : undefined}
+                  onClick={() => update("page", String(n))}
+                >
+                  {n}
+                </Button>
+              ))}
+            </div>
             <Button
               variant="outline"
               disabled={result.page >= result.totalPages}
