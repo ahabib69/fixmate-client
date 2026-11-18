@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "./SafeImage";
 import { useRouter } from "next/navigation";
 import { Clock, MapPin, Wrench, ArrowLeft, ShieldCheck } from "lucide-react";
 import { publicFetch } from "@/lib/api";
@@ -69,10 +69,9 @@ export function ServiceDetails({ id }: { id: string }) {
       <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
         <article>
           <div className="relative h-64 overflow-hidden rounded-xl sm:h-96">
-            <Image
+            <SafeImage
               src={service.image}
               alt={service.title}
-              fill
               sizes="(max-width: 1024px) 100vw, 760px"
               className="object-cover"
               priority

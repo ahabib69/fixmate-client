@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { SafeImage } from "./SafeImage";
 import { MapPin, Clock, User } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
@@ -10,10 +10,9 @@ export function ServiceCard({ service }: { service: Service }) {
   return (
     <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-shadow hover:shadow-md">
       <div className="relative h-48 w-full shrink-0">
-        <Image
+        <SafeImage
           src={service.image}
           alt={service.title}
-          fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
