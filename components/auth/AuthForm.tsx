@@ -20,6 +20,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const rawNext = params.get("next") || "";
   const next =
     rawNext.startsWith("/") &&
@@ -35,10 +36,25 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
     const name = String(form.get("name") || "").trim();
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
-    if (signup && password !== form.get("confirmPassword")) {
-      setError("Your passwords don’t match.");
-      return;
+    const confirm = String(form.get("confirmPassword") || "");
+    const errors: Record<string, string> = {};
+    if (signup && name.length < 2) errors.name = "Please enter your full name.";
+    if (!email) errors.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      errors.email = "Please enter a valid email address.";
+    if (!password) errors.password = "Password is required.";
+    else if (signup) {
+      if (password.length < 6)
+        errors.password = "Password must be at least 6 characters.";
+      else if (!/[A-Z]/.test(password))
+        errors.password = "Password needs at least one uppercase letter.";
+      else if (!/[a-z]/.test(password))
+        errors.password = "Password needs at least one lowercase letter.";
     }
+    if (signup && !errors.password && password !== confirm)
+      errors.confirmPassword = "Your passwords don’t match.";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     setBusy(true);
     try {
       clearAuthToken();
@@ -80,7 +96,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             ? "Get your essentials fixed, or help others fix theirs."
             : "Sign in to manage repairs and keep things running."}
         </p>
-        <form onSubmit={submit} className="mt-7 space-y-4">
+        <form onSubmit={submit} noValidate className="mt-7 space-y-4">
           {signup && (
             <>
               <div className="space-y-2">
@@ -93,20 +109,40 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
                   minLength={2}
                   maxLength={100}
                 />
+                {fieldErrors.name && (
+                <p className="text-xs text-red-600 dark:text-red-400">{fieldErrors.name}</p>
+              )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="role">I want to join as a</Label>
-                <select
-                  id="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                >
-                  <option value="customer">Customer — find repairs</option>
-                  <option value="technician">
-                    Technician — offer services
-                  </option>
-                </select>
+                <Label>I want to join as a</Label>
+                <div className="grid grid-cols-2 gap-3" role="radiogroup">
+                  {[
+                    { value: "customer", title: "Customer", text: "Find repairs" },
+                    { value: "technician", title: "Technician", text: "Offer services" },
+                  ].map((option) => (
+                    <label
+                      key={option.value}
+                      className={`cursor-pointer rounded-lg border p-3 text-sm transition-colors ${
+                        role === option.value
+                          ? "border-brand-500 bg-brand-500/10"
+                          : "hover:border-brand-500/50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value={option.value}
+                        checked={role === option.value}
+                        onChange={() => setRole(option.value)}
+                        className="sr-only"
+                      />
+                      <span className="block font-semibold">{option.title}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {option.text}
+                      </span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </>
           )}
@@ -119,6 +155,9 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
               autoComplete="email"
               required
             />
+            {fieldErrors.email && (
+                <p className="text-xs text-red-600 dark:text-red-400">{fieldErrors.email}</p>
+              )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
@@ -146,9 +185,12 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
                 )}
               </button>
             </div>
-            {signup && (
+            {fieldErrors.password && (
+                <p className="text-xs text-red-600 dark:text-red-400">{fieldErrors.password}</p>
+              )}
+            {signup && !fieldErrors.password && (
               <p className="text-xs text-muted-foreground">
-                Use at least 6 characters.
+                At least 6 characters, with one uppercase and one lowercase letter.
               </p>
             )}
           </div>
@@ -163,6 +205,9 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
                 required
                 minLength={6}
               />
+              {fieldErrors.confirmPassword && (
+                <p className="text-xs text-red-600 dark:text-red-400">{fieldErrors.confirmPassword}</p>
+              )}
             </div>
           )}
           {error && (
