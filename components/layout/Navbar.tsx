@@ -72,6 +72,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium transition-colors",
                   active
@@ -155,6 +156,7 @@ export function Navbar() {
             size="icon"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? (
               <X className="h-6 w-6" />
@@ -172,6 +174,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={pathname === link.href ? "page" : undefined}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium",
