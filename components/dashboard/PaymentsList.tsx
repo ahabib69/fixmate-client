@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { useResource } from "@/hooks/useResource";
 import type { Payment } from "@/lib/types";
 import { formatDate, formatPrice } from "@/lib/utils";
@@ -65,7 +67,11 @@ export function PaymentsList() {
           <EmptyState
             title="No payments yet"
             text="After a repair is completed, pay from My Bookings. Your receipt will appear here."
-          />
+          >
+            <Button asChild className="bg-brand-500 text-white hover:bg-brand-600">
+              <Link href="/dashboard/customer/bookings">Go to My Bookings</Link>
+            </Button>
+          </EmptyState>
         ))}
     </>
   );
