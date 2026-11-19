@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import type { Booking } from "@/lib/types";
 import { BOOKING_STATUSES, STATUS_LABELS } from "@/lib/constants";
 import { formatDate, formatPrice } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -172,15 +173,16 @@ export function BookingsManager({
                   </p>
                   <p>
                     Payment:{" "}
-                    <span
+                    <Badge
+                      variant="outline"
                       className={
                         b.paymentStatus === "paid"
-                          ? "font-medium text-green-600"
-                          : "text-muted-foreground"
+                          ? "border-green-200 bg-green-100 text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-300"
+                          : "border-orange-200 bg-orange-100 text-orange-800 dark:border-orange-900 dark:bg-orange-950 dark:text-orange-300"
                       }
                     >
-                      {b.paymentStatus}
-                    </span>
+                      {b.paymentStatus === "paid" ? "Paid" : "Unpaid"}
+                    </Badge>
                   </p>
                 </div>
                 <div className="mt-5 flex flex-wrap gap-2">
@@ -323,7 +325,7 @@ export function BookingsManager({
         title={
           action?.status === "completed"
             ? "Complete this repair?"
-            : `${STATUS_LABELS[action?.status || ""] || "Update"} this request?`
+            : `${({ accepted: "Accept", rejected: "Reject", "in-progress": "Start work on", cancelled: "Cancel" } as Record<string, string>)[action?.status || ""] || "Update"} this request?`
         }
         description={
           action?.status === "completed"
