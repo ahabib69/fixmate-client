@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,6 +17,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Home,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
@@ -94,6 +96,15 @@ export function DashboardSidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const links = linksForRole(role);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCloseMobile();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen, onCloseMobile]);
 
   const content = (
     <div className="flex h-full flex-col">
@@ -199,6 +210,13 @@ export function DashboardSidebar({
             onClick={onCloseMobile}
           />
           <aside className="absolute inset-y-0 left-0 w-64 border-r bg-background">
+            <button
+              onClick={onCloseMobile}
+              aria-label="Close menu"
+              className="absolute right-3 top-4 z-10 rounded-md p-1.5 text-muted-foreground hover:bg-accent"
+            >
+              <X className="h-5 w-5" />
+            </button>
             {content}
           </aside>
         </div>
