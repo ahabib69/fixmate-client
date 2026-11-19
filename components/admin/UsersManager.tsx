@@ -6,6 +6,7 @@ import { useResource } from "@/hooks/useResource";
 import { api } from "@/lib/api";
 import type { User, Role } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,13 +91,28 @@ export function UsersManager() {
               <tbody>
                 {rows.map((u) => (
                   <tr key={u._id || u.id} className="border-t">
-                    <td className="min-w-40 p-4 font-medium">
-                      {u.name}
-                      {u.email === user?.email && (
-                        <span className="ml-2 text-xs text-muted-foreground">
-                          (you)
+                    <td className="min-w-48 p-4 font-medium">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={u.image || undefined} alt={u.name} />
+                          <AvatarFallback>
+                            {u.name
+                              .split(" ")
+                              .map((n: string) => n[0])
+                              .slice(0, 2)
+                              .join("")
+                              .toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>
+                          {u.name}
+                          {u.email === user?.email && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              (you)
+                            </span>
+                          )}
                         </span>
-                      )}
+                      </div>
                     </td>
                     <td className="p-4">{u.email}</td>
                     <td className="p-4 capitalize">{u.role}</td>
