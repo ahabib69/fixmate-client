@@ -1,4 +1,4 @@
-# FixMate Client
+﻿# FixMate Client
 
 FixMate is a repair service booking platform for Bangladesh. Customers book repairs for devices and home appliances, technicians manage jobs, and admins approve services and monitor payments. Prices are in USD and payments use Stripe (test mode).
 
@@ -19,7 +19,7 @@ Stripe test card: `4242 4242 4242 4242`, any future expiry date, any CVC.
 
 ## Features
 - Public pages: home, services list, service details, about
-- Server-side category filter, price sort and pagination
+- Server-side search, category filter, price sort and pagination
 - Sign up and sign in with BetterAuth, session stays after reload
 - Role based dashboards: customer, technician, admin (protected routes)
 - Customer: request a repair, track bookings, cancel a request, pay after completion with Stripe, payment history
