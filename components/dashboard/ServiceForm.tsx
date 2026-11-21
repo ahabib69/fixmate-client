@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -20,6 +20,12 @@ export function ServiceForm({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [preview, setPreview] = useState("");
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
@@ -132,7 +138,19 @@ export function ServiceForm({
           type="file"
           accept="image/jpeg,image/png,image/webp"
           required={!service}
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            setPreview(f ? URL.createObjectURL(f) : "");
+          }}
         />
+        {preview && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={preview}
+            alt="Selected service preview"
+            className="h-40 w-full max-w-xs rounded-lg border object-cover"
+          />
+        )}
         <p className="text-xs text-muted-foreground">
           JPG, PNG or WebP · Maximum 5 MB · Uploaded through ImgBB
         </p>
