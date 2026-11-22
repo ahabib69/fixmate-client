@@ -27,6 +27,12 @@ export interface Service {
   technicianEmail: string;
   approvalStatus: "pending" | "approved" | "rejected";
   isAvailable: boolean;
+  technician?: {
+    name: string;
+    image?: string | null;
+    area?: string;
+    bio?: string;
+  } | null;
   createdAt: string;
 }
 
