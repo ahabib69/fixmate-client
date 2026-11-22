@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { MapPin, Facebook, Linkedin, Mail } from "lucide-react";
+import { MapPin, Facebook, Linkedin, Mail, Phone } from "lucide-react";
 import { Logo } from "./Logo";
 import { XIcon } from "@/components/icons/XIcon";
 import { CATEGORIES } from "@/lib/constants";
+
 export function Footer() {
   const url = encodeURIComponent(
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
@@ -18,7 +19,7 @@ export function Footer() {
             Find a repair, follow the progress, and pay only after the job is
             done.
           </p>
-          <p className="mt-5 text-xs text-navy-400">Share FixMate</p>
+          <p className="mt-5 text-xs text-navy-400">Follow and share FixMate</p>
           <div className="mt-2 flex gap-3">
             <a
               href={`https://x.com/intent/tweet?url=${url}&text=Find%20your%20next%20repair%20with%20FixMate`}
@@ -87,22 +88,32 @@ export function Footer() {
         </div>
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
-            Repair questions?
+            Contact Us
           </h3>
-          <p className="mt-4 flex gap-2 text-sm text-navy-300">
-            <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-            Contact the technician using the email on their service page.
-          </p>
+          <ul className="mt-4 space-y-3 text-sm text-navy-300">
+            <li className="flex gap-2">
+              <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+              <a href="mailto:support@fixmate.com" className="hover:text-white">
+                support@fixmate.com
+              </a>
+            </li>
+            <li className="flex gap-2">
+              <Phone className="mt-0.5 h-4 w-4 shrink-0" />
+              <a href="tel:+8801700000000" className="hover:text-white">
+                +880 1700-000000
+              </a>
+            </li>
+            <li className="flex gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>Mirpur 10, Dhaka 1216, Bangladesh</span>
+            </li>
+          </ul>
           <Link
             href="/dashboard/customer/bookings"
-            className="mt-3 inline-block text-sm text-navy-300 underline hover:text-white"
+            className="mt-4 inline-block text-sm text-navy-300 underline hover:text-white"
           >
             Track your booking
           </Link>
-          <p className="mt-4 flex gap-2 text-sm text-navy-300">
-            <MapPin className="h-4 w-4 shrink-0" />
-            Built for Bangladesh · USD pricing
-          </p>
           <p className="mt-3 text-xs text-navy-400">
             Demo platform · Stripe test payments only
           </p>
