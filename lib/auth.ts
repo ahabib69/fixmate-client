@@ -1,22 +1,64 @@
 import { betterAuth } from "better-auth";
 import { APIError } from "better-auth/api";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { MongoClient } from "mongodb";
+import { MongoClient, type Db } from "mongodb";
 
-const client = new MongoClient(process.env.MONGODB_URI as string);
-const db = client.db("fixmate");
+// Serverless-safe Mongo connection.
+// If the driver ever closes its topology (for example after one failed connection
+// attempt), a normal module-level client stays dead until the function restarts and
+// every request fails with "Topology is closed". Here the client is recreated
+// automatically, and every database call always uses the current live client.
+const globalForMongo = globalThis as unknown as { _fixmateMongo?: MongoClient };
+
+function createClient(): MongoClient {
+  const c = new MongoClient(process.env.MONGODB_URI as string, {
+    maxPoolSize: 5,
+    minPoolSize: 0,
+    maxIdleTimeMS: 10000,
+    connectTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 10000,
+    retryReads: true,
+    retryWrites: true,
+  });
+  c.on("topologyClosed", () => {
+    if (globalForMongo._fixmateMongo === c) {
+      globalForMongo._fixmateMongo = createClient();
+    }
+  });
+  return c;
+}
+
+function getClient(): MongoClient {
+  if (!globalForMongo._fixmateMongo) {
+    globalForMongo._fixmateMongo = createClient();
+  }
+  return globalForMongo._fixmateMongo;
+}
+
+// A Db look-alike that resolves the live client on every call.
+const db = new Proxy({} as Db, {
+  get(_target, prop) {
+    const real = getClient().db("fixmate") as unknown as Record<
+      string | symbol,
+      unknown
+    >;
+    const value = real[prop];
+    return typeof value === "function"
+      ? (value as (...args: unknown[]) => unknown).bind(real)
+      : value;
+  },
+});
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL,
-  // Add your production client URL here when you deploy.
+  // Production client URL must be trusted.
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
+    "https://fixmate-asad.vercel.app",
     "http://localhost:3000",
   ],
-  database: mongodbAdapter(db, {
-    client,
-  }),
+  database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
