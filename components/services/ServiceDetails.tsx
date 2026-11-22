@@ -11,7 +11,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RequestRepairModal } from "./RequestRepairModal";
+
 export function ServiceDetails({ id }: { id: string }) {
   const { user, isPending } = useAuth();
   const router = useRouter();
@@ -57,6 +59,7 @@ export function ServiceDetails({ id }: { id: string }) {
   const canRequest =
     !user ||
     (user.role === "customer" && user.email !== service.technicianEmail);
+  const tech = service.technician;
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <Link
@@ -119,9 +122,33 @@ export function ServiceDetails({ id }: { id: string }) {
           </div>
           <div className="mb-6 border-t pt-5">
             <p className="text-xs text-muted-foreground">Your technician</p>
-            <p className="mt-1 font-semibold">{service.technicianName}</p>
+            <div className="mt-3 flex items-center gap-3">
+              <Avatar className="h-12 w-12">
+                <AvatarImage
+                  src={tech?.image || undefined}
+                  alt={service.technicianName}
+                />
+                <AvatarFallback>
+                  {service.technicianName.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="font-semibold">{service.technicianName}</p>
+                {tech?.area && (
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="h-3 w-3 shrink-0" />
+                    {tech.area}
+                  </p>
+                )}
+              </div>
+            </div>
+            {tech?.bio && (
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {tech.bio}
+              </p>
+            )}
             <a
-              className="mt-1 block break-all text-xs text-brand-600 underline"
+              className="mt-3 block break-all text-xs text-brand-600 underline"
               href={`mailto:${service.technicianEmail}`}
             >
               {service.technicianEmail}
